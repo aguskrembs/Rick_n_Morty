@@ -1,6 +1,5 @@
-import "react-native-gesture-handler";
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import _debounce from "lodash/debounce";
 import {
     Animated,
     Text,
@@ -18,7 +17,6 @@ import HeaderBar from "./components/HeaderBar/headerBar";
 import CharacterDetails from "./components/CharacterDetails/ModalCharacters";
 import FilterScreenRenderer from "./components/Filter/FilterScreenRenderer";
 import styles from "./appStyles";
-// Redux imports
 import { useSelector, useDispatch } from "react-redux";
 import { shakeAnimation } from "./components/Animation/shake";
 import {
@@ -38,7 +36,6 @@ const HEIGHT = PixelRatio.getPixelSizeForLayoutSize(60);
 const Drawer = createDrawerNavigator();
 
 export default function mainScreen() {
-    // ---------------------------------- Redux declarations ---------------------------------- //
     const dispatch = useDispatch();
     const {
         characters,
@@ -53,27 +50,51 @@ export default function mainScreen() {
         dispatch(fetchInitialCharacters());
     }, []);
 
-    // ---------------------------------- State declarations ---------------------------------- //
     const [showModal, setShowModal] = useState(false);
     const [characterModal, setCharacterModal] = useState({});
     const [removedCharacterId, setRemovedCharacterId] = useState(-1);
+    const [isFetching, setIsFetching] = useState(false);
     const scrollY = React.useRef(new Animated.Value(0)).current;
     const animX = React.useRef(new Animated.Value(0)).current;
+    const [debouncedOnEndReached, setDebouncedOnEndReached] = useState(
+        _debounce(() => {
+            if (!isFetching && !hasErrors) {
+                setIsFetching(true);
+                dispatch(fetchNewCharacters())
+                    .then(() => {
+                        setIsFetching(false);
+                    })
+                    .catch(() => {
+                        setIsFetching(false);
+                    });
+            }
+        }, 1000) // Adjust the delay as needed
+    );
 
     const getNewCharactersFromAPI = () => {
-        dispatch(fetchNewCharacters());
+        if (!isFetching) {
+            setIsFetching(true);
+            dispatch(fetchNewCharacters())
+                .then(() => {
+                    setIsFetching(false);
+                })
+                .catch(() => {
+                    setIsFetching(false);
+                });
+        }
     };
 
-    // ---------------------------------- Press handlers ---------------------------------- //
     const pressHandler = (character) => {
         setShowModal(true);
         setCharacterModal(character);
     };
+
     const acceptHandler = (filterAttributes) => {
         setShowModal(false);
         setCharacterModal({});
         dispatch(fetchFilteredCharacters(filterAttributes));
     };
+
     const closeHandler = () => {
         setShowModal(false);
         setCharacterModal({});
@@ -93,21 +114,13 @@ export default function mainScreen() {
         });
     };
 
-    // ---------------------------------- Character Render ---------------------------------- //
     function characterRender({ item, index }) {
-        const inputRange = [-1, 0, ITEM_SIZE * index, ITEM_SIZE * (index + 2)];
         const opacityInputRange = [
             -1,
             0,
             ITEM_SIZE * index,
             ITEM_SIZE * (index + 1),
         ];
-
-        const scale = scrollY.interpolate({
-            inputRange,
-            outputRange: [1, 1, 1, 0],
-        });
-
         const opacity = scrollY.interpolate({
             inputRange: opacityInputRange,
             outputRange: [1, 1, 1, 0],
@@ -124,17 +137,10 @@ export default function mainScreen() {
                         alignSelf: "center",
                         flexDirection: "row",
                         marginTop: SPACING,
-                        backgroundColor: "rgba(0,0,0,0.8)", //item.color,
+                        backgroundColor: "rgba(0,0,0,0.8)",
                         borderRadius: 12,
                         height: HEIGHT,
                         width: "100%",
-                        transform: [
-                            { scale },
-                            {
-                                translateX:
-                                    item.id === removedCharacterId ? animX : 0,
-                            },
-                        ],
                         opacity,
                     }}
                 >
@@ -189,7 +195,6 @@ export default function mainScreen() {
         );
     }
 
-    // ---------------------------------- Navigation Panes ---------------------------------- //
     function HomeScreen({ navigation }) {
         return (
             <SafeAreaView style={styles.SAVcontainer}>
@@ -203,21 +208,11 @@ export default function mainScreen() {
                         keyExtractor={(item) => item.id}
                         data={characters}
                         renderItem={characterRender}
-                        onEndReached={getNewCharactersFromAPI}
+                        onEndReached={debouncedOnEndReached}
                         contentContainerStyle={{
                             padding: SPACING,
                             paddingTop: 0,
                         }}
-                        onScroll={Animated.event(
-                            [
-                                {
-                                    nativeEvent: {
-                                        contentOffset: { y: scrollY },
-                                    },
-                                },
-                            ],
-                            { useNativeDriver: true }
-                        )}
                     />
                 )}
 
@@ -304,6 +299,7 @@ export default function mainScreen() {
                         headerTitle: () => <HeaderBar name="HomeScreen" />,
                     }}
                 />
+
                 <Drawer.Screen
                     name="FilterScreen"
                     component={FilterScreen}

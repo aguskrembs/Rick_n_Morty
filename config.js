@@ -1,18 +1,18 @@
-import { initializeApp } from "firebase/app";  
+import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA_IkN13c3fFYHLc-jht4E018e9Um70wcQ",
-  authDomain: "rick-n-morty-final.firebaseapp.com",
-  databaseURL: "https://rick-n-morty-final-default-rtdb.firebaseio.com",
-  projectId: "rick-n-morty-final",
-  storageBucket: "rick-n-morty-final.appspot.com",
-  messagingSenderId: "896780655843",
-  appId: "1:896780655843:web:2af159d6514561b234b9d6",
+    apiKey: process.env.EXPO_PUBLIC_API_KEY,
+    authDomain: process.env.EXPO_PUBLIC_AUTH_DOMAIN,
+    databaseURL: process.env.EXPO_PUBLIC_DATABASE_URL,
+    projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
+    storageBucket: process.env.EXPO_PUBLIC_STORAGE_BUCKET,
+    messagingSenderId: process.env.EXPO_PUBLIC_MESSAGING_SENDER_ID,
+    appId: process.env.EXPO_PUBLIC_APP_ID,
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const database =  getDatabase(app);
+const database = getDatabase(app);
 
 export { database };
