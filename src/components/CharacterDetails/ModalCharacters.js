@@ -29,6 +29,11 @@ export default function CharacterDetails({ character, closeHandler }) {
         closeHandler();
     };
 
+    const deleteCommentHandler = () => {
+        dispatch(applyCommentToCharacter({ id: character.id, comment: "" }));
+        closeHandler();
+    };
+
     return (
         <KeyboardAvoidingView style={styles.container} behavior="padding">
             <ScrollView style={styles.modalContainer}>
@@ -52,189 +57,190 @@ export default function CharacterDetails({ character, closeHandler }) {
                 <Text style={styles.detailedName}>{character.name}</Text>
 
                 <View style={styles.modalSeparator} />
-                <View style={styles.characterDetailContainer}>
-                    <Text style={styles.characterDetailHeader}>
-                        {"Status: "}{" "}
-                    </Text>
 
-                    {character.status === "Alive" ? (
-                        <>
-                            <Image
-                                style={styles.characterDetailIcon}
-                                source={require("./green_heart.png")}
-                            />
-                            <Text style={styles.aliveStatus}>
-                                {" "}
-                                {character.status}
-                            </Text>
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                    {character.status === "Dead" ? (
-                        <>
-                            <Image
-                                style={styles.characterDetailIcon}
-                                source={require("./rip.png")}
-                            />
-                            <Text style={styles.deadStatus}>
-                                {" "}
-                                {character.status}
-                            </Text>
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                    {character.status === "unknown" ? (
-                        <>
-                            <Image
-                                style={styles.characterDetailIcon}
-                                source={require("./unknown_icon.png")}
-                            />
-                            <Text style={styles.characterInformationText}>
-                                {" "}
-                                {character.status}
-                            </Text>
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                </View>
-
-                <View style={styles.characterDetailContainer}>
-                    <Text style={styles.characterDetailHeader}>
-                        {"Gender: "}{" "}
-                    </Text>
-                    <View style={styles.characteDetailContent}>
-                        {character.gender === "Male" ? (
-                            <Image
-                                style={styles.characterDetailIcon}
-                                source={require("./male_icon.png")}
-                            />
-                        ) : (
-                            <></>
-                        )}
-                        {character.gender === "Female" ? (
-                            <Image
-                                style={styles.characterDetailIcon}
-                                source={require("./female_icon.png")}
-                            />
-                        ) : (
-                            <></>
-                        )}
-                        {character.gender === "unknown" ? (
-                            <Image
-                                style={styles.characterDetailIcon}
-                                source={require("./unknown_icon.png")}
-                            />
-                        ) : (
-                            <></>
-                        )}
-                        <Text style={styles.characterInformationText}>
-                            {" "}
-                            {character.gender}
+                <View style={styles.detailSection}>
+                    <View style={styles.characterDetailContainer}>
+                        <Text style={styles.characterDetailHeader}>
+                            {"Status: "}{" "}
                         </Text>
-                    </View>
-                </View>
 
-                <View style={styles.characterDetailContainer}>
-                    <Text style={styles.characterDetailHeader}>
-                        {"Species: "}{" "}
-                    </Text>
-                    <View style={styles.characteDetailContent}>
-                        <View>
-                            <Text style={styles.characterInformationText}>
-                                {" "}
-                                {character.species}
-                            </Text>
-                            {character.type !== "" ? (
+                        {character.status === "Alive" ? (
+                            <>
+                                <Image
+                                    style={styles.characterDetailIcon}
+                                    source={require("./green_heart.png")}
+                                />
+                                <Text style={styles.aliveStatus}>
+                                    {" "}
+                                    {character.status}
+                                </Text>
+                            </>
+                        ) : (
+                            <></>
+                        )}
+                        {character.status === "Dead" ? (
+                            <>
+                                <Image
+                                    style={styles.characterDetailIcon}
+                                    source={require("./rip.png")}
+                                />
+                                <Text style={styles.deadStatus}>
+                                    {" "}
+                                    {character.status}
+                                </Text>
+                            </>
+                        ) : (
+                            <></>
+                        )}
+                        {character.status === "unknown" ? (
+                            <>
+                                <Image
+                                    style={styles.characterDetailIcon}
+                                    source={require("./unknown_icon.png")}
+                                />
                                 <Text style={styles.characterInformationText}>
                                     {" "}
-                                    ({character.type})
+                                    {character.status}
                                 </Text>
+                            </>
+                        ) : (
+                            <></>
+                        )}
+                    </View>
+
+                    <View style={styles.characterDetailContainer}>
+                        <Text style={styles.characterDetailHeader}>
+                            {"Gender: "}{" "}
+                        </Text>
+                        <View style={styles.characteDetailContent}>
+                            {character.gender === "Male" ? (
+                                <Image
+                                    style={styles.characterDetailIcon}
+                                    source={require("./male_icon.png")}
+                                />
                             ) : (
                                 <></>
                             )}
+                            {character.gender === "Female" ? (
+                                <Image
+                                    style={styles.characterDetailIcon}
+                                    source={require("./female_icon.png")}
+                                />
+                            ) : (
+                                <></>
+                            )}
+                            {character.gender === "unknown" ? (
+                                <Image
+                                    style={styles.characterDetailIcon}
+                                    source={require("./unknown_icon.png")}
+                                />
+                            ) : (
+                                <></>
+                            )}
+                            <Text style={styles.characterInformationText}>
+                                {" "}
+                                {character.gender}
+                            </Text>
                         </View>
                     </View>
-                </View>
 
-                <View style={styles.characterDetailContainerTruncated}>
-                    <Text style={styles.characterDetailHeader}>
-                        {"Origin: "}{" "}
-                    </Text>
-                    <View style={styles.characteDetailContent}>
-                        <Text style={styles.characterInformationText}>
-                            {" "}
-                            {character.origin.name}
+                    <View style={styles.characterDetailContainer}>
+                        <Text style={styles.characterDetailHeader}>
+                            {"Species: "}{" "}
                         </Text>
+                        <View style={styles.characteDetailContent}>
+                            <View>
+                                <Text style={styles.characterInformationText}>
+                                    {" "}
+                                    {character.species}
+                                </Text>
+                                {character.type !== "" ? (
+                                    <Text
+                                        style={styles.characterInformationText}
+                                    >
+                                        {" "}
+                                        ({character.type})
+                                    </Text>
+                                ) : (
+                                    <></>
+                                )}
+                            </View>
+                        </View>
                     </View>
-                </View>
 
-                <View style={styles.characterDetailContainerTruncated}>
-                    <Text style={styles.characterDetailHeader}>
-                        {"Actual Location: "}{" "}
-                    </Text>
-                    <View>
-                        <Text style={styles.characterInformationText}>
-                            {" "}
-                            {character.location.name}
+                    <View style={styles.characterDetailContainer}>
+                        <Text style={styles.characterDetailHeader}>
+                            {"Origin: "}{" "}
                         </Text>
-                    </View>
-                </View>
-
-                {favouriteCharactersId.includes(character.id) ? (
-                    <>
-                        <View style={styles.characterDetailContainerTruncated}>
-                            <Text style={styles.characterDetailHeader}>
-                                {"Comment: "}{" "}
+                        <View style={styles.characteDetailContent}>
+                            <Text style={styles.characterInformationText}>
+                                {" "}
+                                {character.origin.name}
                             </Text>
-                            <View style={styles.commentContainer}></View>
-                            <View style={styles.textFilterContainer}>
-                                {favouriteCharacters.find(
-                                    (item) => item.id === character.id
-                                ).comment != "" ? (
+                        </View>
+                    </View>
+
+                    <View style={styles.characterDetailContainer}>
+                        <Text style={styles.characterDetailHeader}>
+                            {"Actual Location: "}{" "}
+                        </Text>
+                        <View>
+                            <Text style={styles.characterInformationText}>
+                                {" "}
+                                {character.location.name}
+                            </Text>
+                        </View>
+                    </View>
+
+                    {favouriteCharactersId.includes(character.id) ? (
+                        <>
+                            <View style={styles.characterDetailContainer}>
+                                <Text style={styles.characterDetailHeader}>
+                                    {"Comment: "}{" "}
+                                </Text>
+                                <View style={styles.commentContainer}></View>
+                                <View style={styles.textFilterContainer}>
                                     <TextInput
                                         style={styles.commentTextInput}
                                         placeholder={
-                                            favouriteCharacters.find(
-                                                (item) =>
-                                                    item.id === character.id
-                                            ).comment
+                                            "Add a comment to this character"
                                         }
-                                        placeholderTextColor="black"
+                                        placeholderTextColor="gray"
                                         value={comment}
                                         onChangeText={(comment) => {
                                             setComment(comment);
                                         }}
                                     />
-                                ) : (
-                                    <TextInput
-                                        style={styles.commentTextInput}
-                                        placeholder="Insert a comment for this character"
-                                        placeholderTextColor="grey"
-                                        value={comment === "" ? comment : ""}
-                                        onChangeText={(comment) => {
-                                            setComment(comment);
-                                        }}
-                                    />
-                                )}
+                                    <View style={styles.buttonContainer}>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                favouriteCloseHandler();
+                                            }}
+                                            style={styles.saveButton}
+                                        >
+                                            <Text style={styles.saveButtonText}>
+                                                Save comment
+                                            </Text>
+                                        </TouchableOpacity>
+
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                deleteCommentHandler();
+                                            }}
+                                            style={styles.deleteButton}
+                                        >
+                                            <Text
+                                                style={styles.deleteButtonText}
+                                            >
+                                                Delete comment
+                                            </Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
                             </View>
-                            <View style={styles.saveButtonContainer}>
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        favouriteCloseHandler();
-                                    }}
-                                    style={styles.saveButton}
-                                >
-                                    <Text style={styles.saveButtonText}>
-                                        Save comment
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </>
-                ) : null}
+                        </>
+                    ) : null}
+                </View>
             </ScrollView>
         </KeyboardAvoidingView>
     );
