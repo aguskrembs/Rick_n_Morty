@@ -56,20 +56,6 @@ export default function mainScreen() {
     const [isFetching, setIsFetching] = useState(false);
     const scrollY = React.useRef(new Animated.Value(0)).current;
     const animX = React.useRef(new Animated.Value(0)).current;
-    const [debouncedOnEndReached, setDebouncedOnEndReached] = useState(
-        _debounce(() => {
-            if (!isFetching && !hasErrors) {
-                setIsFetching(true);
-                dispatch(fetchNewCharacters())
-                    .then(() => {
-                        setIsFetching(false);
-                    })
-                    .catch(() => {
-                        setIsFetching(false);
-                    });
-            }
-        }, 1000) // Adjust the delay as needed
-    );
 
     const getNewCharactersFromAPI = () => {
         if (!isFetching) {
@@ -208,7 +194,7 @@ export default function mainScreen() {
                         keyExtractor={(item) => item.id}
                         data={characters}
                         renderItem={characterRender}
-                        onEndReached={debouncedOnEndReached}
+                        onEndReached={getNewCharactersFromAPI}
                         contentContainerStyle={{
                             padding: SPACING,
                             paddingTop: 0,

@@ -29,10 +29,10 @@ const charactersSlice = createSlice({
         getCharactersSuccess: (state, { payload }) => {
             state.characters = [];
             payload.results.forEach((character) => {
-                if (!state.favouriteCharactersId.includes(character.id)) {
-                    const newCharacter = { ...character, comment: "" };
-                    state.characters.push(newCharacter);
-                }
+                // if (!state.favouriteCharactersId.includes(character.id)) {
+                const newCharacter = { ...character, comment: "" };
+                state.characters.push(newCharacter);
+                // }
             });
             state.loading = false;
             state.hasErrors = false;
@@ -43,7 +43,7 @@ const charactersSlice = createSlice({
             state.hasErrors = true;
         },
         getNewCharactersSuccess: (state, { payload }) => {
-            state.characters = [...state.characters, ...payload.results];
+            state.characters.push(...payload.results);
             state.loading = false;
             state.hasErrors = false;
             state.nextAddress = payload.info.next;
@@ -220,7 +220,7 @@ export function applyCommentToCharacter(item) {
 
         try {
             const reference = ref(database, "commentHistory/" + item.id);
-            push(reference, {
+            add(reference, {
                 comment: item.comment,
             });
         } catch (error) {
