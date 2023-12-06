@@ -293,7 +293,7 @@ export default function mainScreen() {
                 initialRouteName="HomeScreen"
             >
                 <Drawer.Screen
-                    name="Home Screen"
+                    name="HomeScreen"
                     component={HomeScreen}
                     options={{
                         headerTitle: () => <HeaderBar name="HomeScreen" />,
@@ -301,21 +301,21 @@ export default function mainScreen() {
                 />
 
                 <Drawer.Screen
-                    name="Filter Screen"
+                    name="FilterScreen"
                     component={FilterScreen}
                     options={{
                         headerTitle: () => <HeaderBar name="FilterScreen" />,
                     }}
                 />
                 <Drawer.Screen
-                    name="Favorites Screen"
+                    name="FavoritesScreen"
                     component={FavoritesScreen}
                     options={{
                         headerTitle: () => <HeaderBar name="FavoritesScreen" />,
                     }}
                 />
                 <Drawer.Screen
-                    name="History Screen"
+                    name="HistoryScreen"
                     component={HistoryScreen}
                     options={{
                         headerTitle: () => <HeaderBar name="HistoryScreen" />,
