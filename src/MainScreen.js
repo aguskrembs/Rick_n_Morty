@@ -15,6 +15,7 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import HeaderBar from "./components/HeaderBar/headerBar";
 import CharacterDetails from "./components/CharacterDetails/ModalCharacters";
+import HistoryScreenRenderer from "./components/HistoryScreen/HistoryScreenRenderer";
 import FilterScreenRenderer from "./components/Filter/FilterScreenRenderer";
 import styles from "./appStyles";
 import { useSelector, useDispatch } from "react-redux";
@@ -254,8 +255,21 @@ export default function mainScreen() {
                     <CharacterDetails
                         character={characterModal}
                         closeHandler={closeHandler}
+                        showCommentSection={true}
                     />
                 </Modal>
+            </SafeAreaView>
+        );
+    }
+
+    function HistoryScreen({ navigation }) {
+        return (
+            <SafeAreaView style={styles.SAVcontainer}>
+                <HeaderBar closeHandler={closeHandler} />
+                <HistoryScreenRenderer
+                    acceptHandler={acceptHandler}
+                    closeHandler={closeHandler}
+                />
             </SafeAreaView>
         );
     }
@@ -279,7 +293,7 @@ export default function mainScreen() {
                 initialRouteName="HomeScreen"
             >
                 <Drawer.Screen
-                    name="HomeScreen"
+                    name="Home Screen"
                     component={HomeScreen}
                     options={{
                         headerTitle: () => <HeaderBar name="HomeScreen" />,
@@ -287,17 +301,24 @@ export default function mainScreen() {
                 />
 
                 <Drawer.Screen
-                    name="FilterScreen"
+                    name="Filter Screen"
                     component={FilterScreen}
                     options={{
                         headerTitle: () => <HeaderBar name="FilterScreen" />,
                     }}
                 />
                 <Drawer.Screen
-                    name="FavoritesScreen"
+                    name="Favorites Screen"
                     component={FavoritesScreen}
                     options={{
                         headerTitle: () => <HeaderBar name="FavoritesScreen" />,
+                    }}
+                />
+                <Drawer.Screen
+                    name="History Screen"
+                    component={HistoryScreen}
+                    options={{
+                        headerTitle: () => <HeaderBar name="HistoryScreen" />,
                     }}
                 />
             </Drawer.Navigator>

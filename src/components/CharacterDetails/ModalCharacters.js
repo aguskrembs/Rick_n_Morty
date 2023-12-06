@@ -16,7 +16,11 @@ import {
     applyCommentToCharacter,
 } from "../../slices/characters";
 
-export default function CharacterDetails({ character, closeHandler }) {
+export default function CharacterDetails({
+    character,
+    closeHandler,
+    showCommentSection,
+}) {
     const dispatch = useDispatch();
     const { favouriteCharacters, favouriteCharactersId } =
         useSelector(charactersSelector);
@@ -192,7 +196,8 @@ export default function CharacterDetails({ character, closeHandler }) {
                         </View>
                     </View>
 
-                    {favouriteCharactersId.includes(character.id) ? (
+                    {favouriteCharactersId.includes(character.id) &&
+                    showCommentSection == true ? (
                         <>
                             <View style={styles.characterDetailContainer}>
                                 <Text style={styles.characterDetailHeader}>

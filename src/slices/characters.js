@@ -1,13 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {
-    set,
-    update,
-    ref,
-    get,
-    child,
-    getDatabase,
-    push,
-} from "firebase/database";
+import { set, update, ref, get, child, getDatabase } from "firebase/database";
 import { database } from "../../config";
 
 export const initialState = {
@@ -29,10 +21,8 @@ const charactersSlice = createSlice({
         getCharactersSuccess: (state, { payload }) => {
             state.characters = [];
             payload.results.forEach((character) => {
-                // if (!state.favouriteCharactersId.includes(character.id)) {
                 const newCharacter = { ...character, comment: "" };
                 state.characters.push(newCharacter);
-                // }
             });
             state.loading = false;
             state.hasErrors = false;
@@ -52,14 +42,9 @@ const charactersSlice = createSlice({
             if (!state.favouriteCharactersId.includes(payload.id)) {
                 state.favouriteCharactersId.push(payload.id);
                 state.favouriteCharacters.push(payload);
-                // state.characters = state.characters.filter((id) => id !== payload.id);
-                // state.characters = state.characters.filter(
-                //   (character) => character.id !== payload.id
-                // );
             }
         },
         removeFavouriteCharacter: (state, { payload }) => {
-            // state.characters = [payload, ...state.characters];
             state.favouriteCharactersId = state.favouriteCharactersId.filter(
                 (id) => id !== payload.id
             );
@@ -92,6 +77,10 @@ export const {
     addCommentToCharacter,
     getFavouriteCharacter,
 } = charactersSlice.actions;
+
+function generateId() {
+    return Math.floor(Math.random() * 10000);
+}
 
 export function fetchInitialCharacters() {
     return async (dispatch) => {
@@ -190,6 +179,21 @@ export function addNewFavouriteCharacter(character) {
         } catch (error) {
             dispatch(getCharactersFailure());
         }
+
+        try {
+            const reference = ref(
+                database,
+                "history/favouritesHistory/" + Date.now()
+            );
+            set(reference, {
+                eventType: "added character to favourites",
+                itemID: generateId(),
+                timestamp: Date.now(),
+                detail: character.name,
+            });
+        } catch (error) {
+            console.error(error);
+        }
     };
 }
 
@@ -203,10 +207,28 @@ export function removeAFavouriteCharacter(character) {
         } catch (error) {
             dispatch(getCharactersFailure());
         }
+
+        try {
+            const reference = ref(
+                database,
+                "history/favouritesHistory/" + Date.now()
+            );
+            set(reference, {
+                eventType: "deleted character from favourites",
+                itemID: generateId(),
+                timestamp: Date.now(),
+                detail: character.name,
+            });
+        } catch (error) {
+            console.error(error);
+        }
     };
 }
 
 export function applyCommentToCharacter(item) {
+    const name = "";
+
+    console.log("[+] APPLYING COMMENT TO CHARACTER");
     return async (dispatch) => {
         dispatch(addCommentToCharacter(item));
         try {
@@ -219,9 +241,30 @@ export function applyCommentToCharacter(item) {
         }
 
         try {
-            const reference = ref(database, "commentHistory/" + item.id);
-            add(reference, {
-                comment: item.comment,
+            const reference = ref(
+                database,
+                "history/commentHistory/" + Date.now()
+            );
+
+            const nameReference = ref(database, "characterID/" + item.id);
+            get(nameReference).then((snapshot) => {
+                console.log(snapshot.val().name);
+
+                if (item.comment == "") {
+                    set(reference, {
+                        eventType: "deleted comment from character",
+                        itemID: generateId(),
+                        timestamp: Date.now(),
+                        detail: snapshot.val().name,
+                    });
+                } else {
+                    set(reference, {
+                        eventType: "added comment to character",
+                        itemID: generateId(),
+                        timestamp: Date.now(),
+                        detail: snapshot.val().name + ": " + item.comment,
+                    });
+                }
             });
         } catch (error) {
             console.log(error);
